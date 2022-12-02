@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import LotCard from '../../src/components/Card/ParkingLot';
 import GreenHeader from '../../src/components/GreenHeader';
-import { search, getNearestByLatLong } from '../../src/services';
+import { search, getNearestByLatLong, getRecommendationByLatLong } from '../../src/services';
 import Map, { Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import colours from '../../styles/colours';
@@ -45,6 +45,7 @@ const SmartParking = () => {
   const [mapPoint, setMapPoint] = useState({ lat: lat ?? -7.811850253309766, long: long ?? 110.36286696293398 });
   const [markerPoint, setMarkerPoint] = useState({ lat: lat ?? -7.811850253309766, long: long ?? 110.36286696293398 });
   const [latLongRes, setLatLongRes] = useState([]);
+  const [recommendRes, setRecommendRes] = useState([]);
 
   const searchData = async () => {
     const data = await search(searchValue);
@@ -56,10 +57,16 @@ const SmartParking = () => {
     setLatLongRes(data);
   };
 
+  const recommendData = async () => {
+    const data = await getRecommendationByLatLong(markerPoint.lat, markerPoint.long);
+    setRecommendRes(data);
+  };
+
   const handleOnDrag = (e) => {
     setMapPoint({ lat: e.lngLat.lat, long: e.lngLat.lng });
     setMarkerPoint({ lat: e.lngLat.lat, long: e.lngLat.lng });
     latLongData();
+    recommendData();
   };
 
   const handleMapOnDrag = (e) => {
@@ -76,6 +83,7 @@ const SmartParking = () => {
 
   useEffect(() => {
     latLongData();
+    recommendData();
   }, [markerPoint]);
 
   const handleRedirect = (id) => {
@@ -115,13 +123,13 @@ const SmartParking = () => {
         ) : (
           <Flex flexDir={'column'} p={'16px 40px'} height={'100%'}>
             <Box pos={'sticky'} top={'0'}>
-              {latLongRes.length > 0 && (
+              {recommendRes.length > 0 && (
                 <Flex flexDir={'column'} marginBottom={'24px'}>
                   <Text fontSize={'14px'} fontWeight={'medium'}>
                     Search Recommendation
                   </Text>
                   <Box>
-                    {latLongRes.map((item, idx) => {
+                    {recommendRes.map((item, idx) => {
                       return (
                         idx < 3 && (
                           <Tag

@@ -65,6 +65,24 @@ export const getNearestByLatLong = async (lat, long) => {
   }
 };
 
+export const getRecommendationByLatLong = async (lat, long) => {
+  try {
+    const data = await fetch(`${URL}/get-user-nearest-place-recommendation/lat=${lat}&long=${long}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        return json;
+      });
+    return data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 export const search = async (q) => {
   try {
     const data = await fetch(`${URL}/search-place/${q}`, {

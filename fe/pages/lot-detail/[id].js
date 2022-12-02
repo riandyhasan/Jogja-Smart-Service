@@ -113,15 +113,17 @@ const LotDetail = () => {
                   {lotDetail?.address}
                 </Text>
               </Box>
-              <Box marginBottom={'4px'}>
-                <Text>Nearby Loaction</Text>
-                <Text borderRadius={'4px'} border={`1px solid ${colours.custom3}`} p={'2px 4px'}>
-                  {/* Malioboro, Titik 0 KM, Taman Pintar */}
-                  {nearestLot?.map((item, idx) => {
-                    return `${item.name}${idx < nearestLot.length - 1 ? ', ' : ''}`;
-                  })}
-                </Text>
-              </Box>
+              {nearestLot.length > 0 && (
+                <Box marginBottom={'4px'}>
+                  <Text>Nearby Loaction</Text>
+                  <Text borderRadius={'4px'} border={`1px solid ${colours.custom3}`} p={'2px 4px'}>
+                    {/* Malioboro, Titik 0 KM, Taman Pintar */}
+                    {nearestLot?.map((item, idx) => {
+                      return `${item.name}${idx < nearestLot.length - 1 ? ', ' : ''}`;
+                    })}
+                  </Text>
+                </Box>
+              )}
             </Box>
           </DetailCard>
         </Box>

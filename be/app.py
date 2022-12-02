@@ -79,6 +79,7 @@ def read_nearest_places(place_id: int, db: Session = Depends(get_db)):
           result.append(place)
     return result
 
+
 @app.get("/get-user-nearest-place/lat={lat}&long={long}", response_model=List[schemas.Place])
 def read_user_nearest_places(lat: float, long: float, db: Session = Depends(get_db)):
     all_places = crud.get_all_places(db)
@@ -89,6 +90,24 @@ def read_user_nearest_places(lat: float, long: float, db: Session = Depends(get_
         distance = geopy.distance.geodesic(coords_1, coords_2).km
         if(distance <= 1):
           result.append(place)
+    return result
+
+@app.get("/get-user-nearest-place-recommendation/lat={lat}&long={long}", response_model=List[schemas.Place])
+def read_user_nearest_places_recommendation(lat: float, long: float, db: Session = Depends(get_db)):
+    all_places = crud.get_all_places(db)
+    result = []
+    coords_1 = (lat, long)
+    for place in all_places:
+        coords_2 = (place.latitude, place.longitude)
+        distance = geopy.distance.geodesic(coords_1, coords_2).km
+        if(distance <= 1.5):
+          if(len(place.parkings) > 0):
+            available = 0
+            for park in place.parkings:
+                if (park.capacity > park.used):
+                    available += 1
+            if(available > 0):
+                result.append(place)
     return result
 
 @app.put("/update-parking-used", response_model=schemas.Parking)
