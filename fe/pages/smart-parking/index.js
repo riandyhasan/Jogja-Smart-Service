@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import LotCard from '../../src/components/Card/ParkingLot';
 import GreenHeader from '../../src/components/GreenHeader';
 import { search } from '../../src/services';
+import Map from 'react-map-gl';
+import colours from '../../styles/colours';
 
 const data = [
   {
@@ -59,7 +61,7 @@ const SmartParking = () => {
   return (
     <Box>
       <GreenHeader searchBar={true} setSearchValue={setSearchValue} />
-      {searchValue != '' && (
+      {searchValue != '' ? (
         <Box p={'16px 40px'}>
           <Text fontSize={'14px'} fontWeight={'medium'} marginBottom={'24px'}>
             Result for "{searchValue}"
@@ -79,6 +81,21 @@ const SmartParking = () => {
               })}
             </Box>
           )}
+        </Box>
+      ) : (
+        <Box bg={colours.custom2} p={'16px 40px'}>
+          <Map
+            initialViewState={{
+              longitude: 110.36475035239266,
+              latitude: -7.811304219087218,
+              zoom: 14,
+            }}
+            style={{ width: '80vw', height: '80vw', borderRadius: '12px' }}
+            mapStyle='mapbox://styles/mapbox/streets-v9'
+            mapboxAccessToken={
+              'pk.eyJ1IjoidGhvcmlxenMiLCJhIjoiY2xiNmtwNmkyMDB5MjNwcnNxNjFxc3g1ciJ9.PNaL13XceIrgtBzdsAJvNg'
+            }
+          />
         </Box>
       )}
     </Box>
