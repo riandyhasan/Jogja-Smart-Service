@@ -36,7 +36,7 @@ const SmartParking = () => {
   return (
     <Box>
       <GreenHeader searchBar={true} setSearchValue={setSearchValue} />
-      {searchValue != '' || (
+      {searchValue != '' && (
         <Box p={'16px 40px'}>
           <Text fontSize={'14px'} fontWeight={'medium'} marginBottom={'24px'}>
             Result for "{searchValue}"
