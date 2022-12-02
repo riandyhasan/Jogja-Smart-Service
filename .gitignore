@@ -3,3 +3,6 @@ be/__pycache__
 
 # local env files
 env
+
+# SQLite
+be/-- SQLite.sql
