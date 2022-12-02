@@ -9,6 +9,10 @@ class ParkingBase(BaseModel):
 class CreateParking(ParkingBase):
   place_id: int
 
+class UpdateParking(BaseModel):
+  type: str
+  place_id: int
+  used: int
 
 class Parking(ParkingBase):
   id: int
