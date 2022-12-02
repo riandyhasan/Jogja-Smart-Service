@@ -43,6 +43,11 @@ def read_places(place_id: int, db: Session = Depends(get_db)):
       raise HTTPException(status_code=400, detail="Tempat tidak ada di database!")
     return place
 
+@app.get("/search-place/{q}", response_model=List[schemas.Place])
+def search_places(q: str, db: Session = Depends(get_db)):
+    places = crud.get_place_by_keyword(db, keyword=q)
+    return places
+
 @app.get("/get-nearest-place/{place_id}", response_model=List[schemas.Place])
 def read_nearest_places(place_id: int, db: Session = Depends(get_db)):
     curr_place = crud.get_place(db, place_id=place_id)

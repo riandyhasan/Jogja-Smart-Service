@@ -10,6 +10,9 @@ def get_place(db: Session, place_id: int):
 def get_place_by_name(db: Session, name: str):
   return db.query(models.Place).filter(models.Place.name == name).first()
 
+def get_place_by_keyword(db: Session, keyword: str):
+  return db.query(models.Place).filter(models.Place.name.like(f'%{keyword}%')).all()
+
 def get_parking_by_type(db: Session, place_id: int, type: str):
   return db.query(models.Parking).filter(models.Parking.place_id == place_id and models.Parking.type == type).first()
 
