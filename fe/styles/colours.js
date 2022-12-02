@@ -4,6 +4,8 @@ const colours = {
   custom3: '#21A48B',
   custom4: '#ABDDE1',
   custom5: '#F4F7F9',
+
+  placeholder: '#8F8E94',
 };
 
 export default colours;

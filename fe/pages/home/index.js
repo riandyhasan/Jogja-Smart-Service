@@ -3,7 +3,7 @@ import ServiceCard from '../../src/components/ServiceCard';
 import colours from '../../styles/colours';
 
 const data = [
-  { title: 'Smart Parking', src: '/image/smart-parking.png' },
+  { title: 'Smart Parking', src: '/image/smart-parking.png', route: '/smart-parking' },
   { title: 'Accident Detector', src: '/image/accident-detector.png' },
   { title: 'Public Transport', src: '/image/public-transport.png' },
   { title: 'Natural Disaster', src: '/image/natural-disaster.png' },
@@ -11,6 +11,10 @@ const data = [
 ];
 
 const Home = () => {
+  const onClickHandler = (route) => {
+    console.log('line 17 ROUTE', route);
+  };
+
   return (
     <Flex width={'full'} flexDir={'column'} alignItems={'center'}>
       <Text
@@ -28,7 +32,11 @@ const Home = () => {
       <Flex>
         <Flex flexFlow={'row wrap'} rowGap={'32px'} columnGap={'32px'} padding={'0 36px'}>
           {data.map((item, idx) => {
-            return <ServiceCard title={item.title} src={item.src} key={idx} />;
+            return (
+              <a href={item.route}>
+                <ServiceCard title={item.title} src={item.src} key={idx} onClick={() => onClickHandler(item.route)} />
+              </a>
+            );
           })}
         </Flex>
       </Flex>

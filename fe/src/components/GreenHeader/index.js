@@ -1,0 +1,65 @@
+import { Box, Flex, Input, InputGroup, InputLeftElement, Text } from '@chakra-ui/react';
+import colours from '../../../styles/colours';
+import CustomIcon from '../CustomIcon';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import SearchIcon from '@mui/icons-material/Search';
+import ShareIcon from '@mui/icons-material/Share';
+import IosShareIcon from '@mui/icons-material/IosShare';
+import { useRouter } from 'next/router';
+
+const GreenHeader = ({ searchBar }) => {
+  const router = useRouter();
+
+  return (
+    <Box bg={colours.custom3} padding={`64px 20px ${searchBar ? '15px' : '8px'} 20px`}>
+      {searchBar ? (
+        <>
+          <Flex marginBottom={'30px'} alignItems={'center'}>
+            <CustomIcon
+              iconComp={<KeyboardArrowLeftIcon sx={{ fontSize: 32, color: 'white' }} />}
+              onClick={() => {
+                router.back();
+              }}
+            />
+            <Text fontSize={'18px'} color={'white'} fontWeight={'medium'} marginLeft={'8px'}>
+              Layanan Smart Parking
+            </Text>
+          </Flex>
+          <Flex justifyContent={'center'}>
+            <InputGroup w={'full'}>
+              <InputLeftElement
+                pointerEvents='none'
+                children={<SearchIcon sx={{ fontSize: 24, color: colours.placeholder }} />}
+              />
+              <Input
+                type='text'
+                placeholder='Telusuri destinasi / parking lot disini..'
+                bg={'white'}
+                focusBorderColor={colours.custom4}
+                sx={{ filter: 'drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.2))' }}
+                _placeholder={{ fontSize: '14px' }}
+              />
+            </InputGroup>
+          </Flex>
+        </>
+      ) : (
+        <>
+          <Flex alignItems={'center'} justifyContent={'space-between'}>
+            <CustomIcon
+              iconComp={<KeyboardArrowLeftIcon sx={{ fontSize: 32, color: 'white' }} />}
+              onClick={() => {
+                router.back();
+              }}
+            />
+            <Text fontSize={'20px'} color={'white'} fontWeight={'medium'} marginBottom={'8px'}>
+              Layanan Smart Parking
+            </Text>
+            <CustomIcon iconComp={<IosShareIcon sx={{ fontSize: 24, color: 'white' }} />} />
+          </Flex>
+        </>
+      )}
+    </Box>
+  );
+};
+
+export default GreenHeader;
