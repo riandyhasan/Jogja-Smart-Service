@@ -1,4 +1,5 @@
 import { Flex, Heading, Text } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import ServiceCard from '../../src/components/Card/ServiceCard';
 import colours from '../../styles/colours';
 
@@ -11,9 +12,7 @@ const data = [
 ];
 
 const Home = () => {
-  const onClickHandler = (route) => {
-    console.log('line 17 ROUTE', route);
-  };
+  const router = useRouter();
 
   return (
     <Flex width={'full'} flexDir={'column'} alignItems={'center'}>
@@ -33,9 +32,16 @@ const Home = () => {
         <Flex flexFlow={'row wrap'} rowGap={'32px'} columnGap={'32px'} padding={'0 36px'}>
           {data.map((item, idx) => {
             return (
-              <a href={item.route}>
-                <ServiceCard title={item.title} src={item.src} key={idx} onClick={() => onClickHandler(item.route)} />
-              </a>
+              // <a href={item.route}>
+              <ServiceCard
+                title={item.title}
+                src={item.src}
+                key={idx}
+                onClick={() => {
+                  router.push(`/${item.route}`);
+                }}
+              />
+              // </a>
             );
           })}
         </Flex>
