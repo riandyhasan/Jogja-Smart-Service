@@ -4,6 +4,7 @@ const colours = {
   custom3: '#21A48B',
   custom4: '#ABDDE1',
   custom5: '#F4F7F9',
+  custom6: '#4373E2',
 
   placeholder: '#8F8E94',
   success: '#63CE48',
