@@ -7,7 +7,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { useRouter } from 'next/router';
 
-const GreenHeader = ({ searchBar }) => {
+const GreenHeader = ({ searchBar, setSearchValue }) => {
   const router = useRouter();
 
   return (
@@ -38,6 +38,10 @@ const GreenHeader = ({ searchBar }) => {
                 focusBorderColor={colours.custom4}
                 sx={{ filter: 'drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.2))' }}
                 _placeholder={{ fontSize: '14px' }}
+                onChange={(e) => {
+                  console.log('line 42 SEARCH VALUE', e.target.value);
+                  setSearchValue(e.target.value);
+                }}
               />
             </InputGroup>
           </Flex>

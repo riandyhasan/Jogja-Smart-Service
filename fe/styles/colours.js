@@ -6,6 +6,10 @@ const colours = {
   custom5: '#F4F7F9',
 
   placeholder: '#8F8E94',
+  success: '#63CE48',
+  fail: '#FF0000',
+
+  gray1: '#7A797D',
 };
 
 export default colours;

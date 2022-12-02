@@ -1,5 +1,5 @@
 import { Flex, Heading, Text } from '@chakra-ui/react';
-import ServiceCard from '../../src/components/ServiceCard';
+import ServiceCard from '../../src/components/Card/ServiceCard';
 import colours from '../../styles/colours';
 
 const data = [
