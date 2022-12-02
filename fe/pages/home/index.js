@@ -3,7 +3,7 @@ import ServiceCard from '../../src/components/Card/ServiceCard';
 import colours from '../../styles/colours';
 
 const data = [
-  { title: 'Smart Parking', src: '/image/smart-parking.png', route: '/lot-detail' },
+  { title: 'Smart Parking', src: '/image/smart-parking.png', route: '/smart-parking' },
   { title: 'Accident Detector', src: '/image/accident-detector.png' },
   { title: 'Public Transport', src: '/image/public-transport.png' },
   { title: 'Natural Disaster', src: '/image/natural-disaster.png' },

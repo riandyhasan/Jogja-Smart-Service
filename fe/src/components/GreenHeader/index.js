@@ -69,7 +69,7 @@ const GreenHeader = ({ searchBar, setSearchValue }) => {
           </>
         )}
       </Box>
-      <Box h={'110px'}></Box>
+      {searchBar ? <Box h={'180px'}></Box> : <Box h={'110px'}></Box>}
     </>
   );
 };

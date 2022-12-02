@@ -2,7 +2,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import colours from '../../../../styles/colours';
 import CustomIcon from '../../CustomIcon';
 
-const DetailCard = ({ icon, children, title }) => {
+const DetailCard = ({ icon, children, title, available }) => {
   return (
     <Box
       sx={{ filter: 'drop-shadow(0px 4px 2px rgba(0, 0, 0, 0.2))' }}
@@ -21,9 +21,11 @@ const DetailCard = ({ icon, children, title }) => {
             {title}
           </Text>
         </Flex>
-        <Text fontSize={'12px'} lineHeight={'24px'}>
-          Available
-        </Text>
+        {available && (
+          <Text fontSize={'12px'} lineHeight={'24px'}>
+            {available ? 'Available' : 'Full'}
+          </Text>
+        )}
       </Flex>
       {children}
     </Box>
