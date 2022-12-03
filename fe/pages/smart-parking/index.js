@@ -35,6 +35,7 @@ const SmartParking = () => {
   };
 
   const recommendData = async () => {
+    console.log('line 38m markerPoint', markerPoint);
     const data = await getRecommendationByLatLong(markerPoint.lat, markerPoint.long);
     setRecommendRes(data);
   };
@@ -86,7 +87,7 @@ const SmartParking = () => {
             </Text>
             {searchRes && (
               <Box>
-                {searchRes.map((item, idx) => {
+                {searchRes?.map((item, idx) => {
                   return (
                     <LotCard
                       item={item}
@@ -103,13 +104,13 @@ const SmartParking = () => {
         ) : (
           <Flex flexDir={'column'} p={'16px 40px'} height={'100%'}>
             <Box pos={'sticky'} top={'0'}>
-              {recommendRes.length > 0 && (
+              {recommendRes?.length > 0 && (
                 <Flex flexDir={'column'} marginBottom={'24px'}>
                   <Text fontSize={'14px'} fontWeight={'medium'}>
                     Search Recommendation
                   </Text>
                   <Box>
-                    {recommendRes.map((item, idx) => {
+                    {recommendRes?.map((item, idx) => {
                       return (
                         idx < 3 && (
                           <Tag
@@ -145,7 +146,7 @@ const SmartParking = () => {
                 latitude={mapPoint.lat}
                 longitude={mapPoint.long}
                 onDrag={handleMapOnDrag}>
-                {latLongRes.length > 0 &&
+                {latLongRes?.length > 0 &&
                   latLongRes?.map((city, idx) => {
                     return (
                       <Marker
@@ -200,18 +201,19 @@ const SmartParking = () => {
                 )}
               </Map>
             </Box>
-            {latLongRes.length > 0 && (
+            {latLongRes?.length > 0 && (
               <Box
+                p={'4px 2px'}
                 marginTop={'22px'}
-                maxH={'23vh'}
-                // overflowY={'scroll'}
-                overflow={'visible'}
+                maxH={'30vh'}
+                overflowY={'scroll'}
+                // overflow={'visible'}
                 sx={{
                   '::-webkit-scrollbar': {
                     display: 'none',
                   },
                 }}>
-                {latLongRes.map((item, idx) => {
+                {latLongRes?.map((item, idx) => {
                   return (
                     <LotCard
                       item={item}
@@ -227,7 +229,7 @@ const SmartParking = () => {
           </Flex>
         )}
         {((searchValue.length > 0 && searchValue.length >= 3 && searchRes.length <= 0) ||
-          (searchValue <= 0 && latLongRes.length <= 0)) && (
+          (searchValue <= 0 && latLongRes?.length <= 0)) && (
           <Flex p={'0px 40px'} w={'full'} marginTop={'20px'} justifyContent={'center'}>
             <Flex>
               <Flex
