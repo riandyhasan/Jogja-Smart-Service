@@ -1,40 +1,16 @@
 import { Flex, Box, Text, Tag } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import LotCard from '../../src/components/Card/ParkingLot';
 import GreenHeader from '../../src/components/GreenHeader';
 import { search, getNearestByLatLong, getRecommendationByLatLong } from '../../src/services';
-import Map, { Marker } from 'react-map-gl';
+import Map, { Marker, Popup } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import colours from '../../styles/colours';
 import Head from 'next/head';
-
-// const data = [
-//   {
-//     id: 1,
-//     title: 'Abu Bakar Ali',
-//     place_id: 'Jl. Abu Bakar Ali No.75, 001, Suryatmajan, Kec. Danurejan',
-//     type: 'Car, Bus',
-//     capacity: 999,
-//     used: 899,
-//   },
-//   {
-//     id: 2,
-//     title: 'Ngabean',
-//     place_id: 'Jl. Abu Bakar Ali No.75, 001, Suryatmajan, Kec. Danurejan',
-//     type: 'Motor, Car',
-//     capacity: 499,
-//     used: 199,
-//   },
-//   {
-//     id: 3,
-//     title: 'Malioboro',
-//     place_id: 'Jl. Abu Bakar Ali No.75, 001, Suryatmajan, Kec. Danurejan',
-//     type: 'Motor, Car, Bus',
-//     capacity: 40,
-//     used: 40,
-//   },
-// ];
+import Pin from '../../public/icon/pin';
+import Lot from '../../public/icon/lot';
+import Walk from '../../public/icon/walk';
 
 const SmartParking = () => {
   const router = useRouter();
@@ -46,6 +22,8 @@ const SmartParking = () => {
   const [markerPoint, setMarkerPoint] = useState({ lat: lat ?? -7.811850253309766, long: long ?? 110.36286696293398 });
   const [latLongRes, setLatLongRes] = useState([]);
   const [recommendRes, setRecommendRes] = useState([]);
+  const [popupInfo, setPopupInfo] = useState(null);
+  const [, Render] = useState();
 
   const searchData = async () => {
     const data = await search(searchValue);
@@ -54,11 +32,13 @@ const SmartParking = () => {
 
   const latLongData = async () => {
     const data = await getNearestByLatLong(markerPoint.lat, markerPoint.long);
+    console.log('line 57 NEAREST', data);
     setLatLongRes(data);
   };
 
   const recommendData = async () => {
     const data = await getRecommendationByLatLong(markerPoint.lat, markerPoint.long);
+    console.log('line 63 RECOMMENDATION', data);
     setRecommendRes(data);
   };
 
@@ -71,6 +51,10 @@ const SmartParking = () => {
 
   const handleMapOnDrag = (e) => {
     setMapPoint({ lat: e.viewState.latitude, long: e.viewState.longitude });
+  };
+
+  const handleRedirect = (id) => {
+    router.push(`/lot-detail/${id}`);
   };
 
   useEffect(() => {
@@ -86,9 +70,37 @@ const SmartParking = () => {
     recommendData();
   }, [markerPoint]);
 
-  const handleRedirect = (id) => {
-    router.push(`/lot-detail/${id}`);
-  };
+  const forceUpdate = useCallback(() => updateState({}), []);
+
+  // useEffect(() => {
+  //   let timer = setTimeout(() => setRender(true), 2000);
+  //   console.log('TIMER 2 DETIK');
+  //   return () => {
+  //     clearTimeout(timer);
+  //   };
+  // }, [render]);
+
+  console.log('rendering...');
+
+  const pins = useMemo(
+    () =>
+      latLongRes.map((city, index) => (
+        <Marker
+          key={`marker-${index}`}
+          longitude={city.longitude}
+          latitude={city.latitude}
+          anchor='bottom'
+          onClick={(e) => {
+            // If we let the click event propagates to the map, it will immediately close the popup
+            // with `closeOnClick: true`
+            e.originalEvent.stopPropagation();
+            setPopupInfo(city);
+          }}>
+          <Lot />
+        </Marker>
+      )),
+    []
+  );
 
   return (
     <>
@@ -167,6 +179,8 @@ const SmartParking = () => {
                 onDrag={handleMapOnDrag}
                 // onDragEnd={handleMapOnDragEnd}
               >
+                {latLongRes ? pins : forceUpdate()}
+
                 <Marker
                   latitude={markerPoint.lat}
                   longitude={markerPoint.long}
@@ -175,24 +189,33 @@ const SmartParking = () => {
                   draggable={true}
                   scale={3}
                   onDragEnd={handleOnDrag}>
-                  <Flex
-                    w={8}
-                    h={8}
-                    justifyContent={'center'}
-                    alignItems={'center'}
-                    bg={'rgba(67, 115, 226, 0.25)'}
-                    borderRadius={'100%'}
-                    zIndex={0}>
-                    <Box w={4} h={4} bg={colours.custom6} border={'1px solid white'} borderRadius={'100%'}></Box>
-                  </Flex>
+                  <Walk />
                 </Marker>
+
+                {popupInfo && (
+                  <Popup
+                    style={{ maxWidth: '120px', fontSize: '14px', fontFamily: 'poppins', fontWeight: 'medium' }}
+                    anchor='top'
+                    longitude={Number(popupInfo.longitude)}
+                    latitude={Number(popupInfo.latitude)}
+                    onClose={() => setPopupInfo(null)}>
+                    <img width='100%' src={`/image/${popupInfo.image}`} style={{ borderRadius: '6px' }} />
+                    <div
+                      onClick={() => {
+                        handleRedirect(popupInfo.id);
+                      }}>
+                      {popupInfo.name}
+                    </div>
+                  </Popup>
+                )}
               </Map>
             </Box>
             {latLongRes.length > 0 && (
               <Box
                 marginTop={'22px'}
                 maxH={'23vh'}
-                overflowY={'scroll'}
+                // overflowY={'scroll'}
+                overflow={'visible'}
                 sx={{
                   '::-webkit-scrollbar': {
                     display: 'none',
