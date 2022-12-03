@@ -35,6 +35,19 @@ const LotDetail = () => {
     });
   };
 
+  const isURL = (str) => {
+    const pattern = new RegExp(
+      '^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$',
+      'i'
+    ); // fragment locator
+    return pattern.test(str);
+  };
+
   useEffect(() => {
     getPlace(id);
   }, []);
@@ -60,7 +73,7 @@ const LotDetail = () => {
             <Box w={'100%'} h={'100%'} pos={'relative'} borderRadius={'8px'} overflow={'hidden'}>
               {lotDetail ? (
                 <Image
-                  src={`/image/${lotDetail?.image}`}
+                  src={isURL(lotDetail?.image) ? lotDetail?.image : `/image/${lotDetail?.image}`}
                   alt={'Parking Lot Image'}
                   layout={'fill'}
                   objectFit={'cover'}
