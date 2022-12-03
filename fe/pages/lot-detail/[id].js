@@ -24,8 +24,10 @@ const LotDetail = () => {
 
   const getPlace = async (id) => {
     const data = await getPlaceById(id);
-    setLotDetail(data.place);
-    setNearestLot(data.nearest);
+    if (data) {
+      setLotDetail(data.place);
+      setNearestLot(data.nearest);
+    }
   };
 
   const handleOnClickDirection = (lat, long) => {
@@ -36,6 +38,7 @@ const LotDetail = () => {
   };
 
   const isURL = (str) => {
+    if (!str) return false;
     const pattern = new RegExp(
       '^(https?:\\/\\/)?' + // protocol
         '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
@@ -45,12 +48,15 @@ const LotDetail = () => {
         '(\\#[-a-z\\d_]*)?$',
       'i'
     ); // fragment locator
-    return pattern.test(str);
+    return !pattern.test(str);
   };
 
   useEffect(() => {
-    getPlace(id);
-  }, []);
+    if (id) {
+      getPlace(id);
+      console.log('time 59', lotDetail);
+    }
+  }, [id]);
 
   return (
     <>
@@ -71,9 +77,9 @@ const LotDetail = () => {
             borderRadius={'8px'}
             bg={'white'}>
             <Box w={'100%'} h={'100%'} pos={'relative'} borderRadius={'8px'} overflow={'hidden'}>
-              {lotDetail ? (
+              {lotDetail?.image ? (
                 <Image
-                  src={isURL(lotDetail?.image) ? lotDetail?.image : `/image/${lotDetail?.image}`}
+                  src={isURL(lotDetail?.image) ? lotDetail?.image ?? '' : `/image/${lotDetail?.image ?? ''}`}
                   alt={'Parking Lot Image'}
                   layout={'fill'}
                   objectFit={'cover'}

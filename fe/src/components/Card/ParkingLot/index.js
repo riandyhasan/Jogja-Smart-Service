@@ -28,7 +28,7 @@ const LotCard = ({ item, onClick }) => {
       flexDir={'column'}
       cursor={'pointer'}
       onClick={onClick}>
-      <Text fontSize={'14px'} fontWeight={'medium'}>
+      <Text fontSize={'14px'} fontWeight={'medium'} noOfLines={1}>
         {name}
       </Text>
       {types(parkings) ? (
