@@ -23,7 +23,6 @@ const SmartParking = () => {
   const [latLongRes, setLatLongRes] = useState([]);
   const [recommendRes, setRecommendRes] = useState([]);
   const [popupInfo, setPopupInfo] = useState(null);
-  const [, Render] = useState();
 
   const searchData = async () => {
     const data = await search(searchValue);
@@ -32,13 +31,11 @@ const SmartParking = () => {
 
   const latLongData = async () => {
     const data = await getNearestByLatLong(markerPoint.lat, markerPoint.long);
-    console.log('line 57 NEAREST', data);
     setLatLongRes(data);
   };
 
   const recommendData = async () => {
     const data = await getRecommendationByLatLong(markerPoint.lat, markerPoint.long);
-    console.log('line 63 RECOMMENDATION', data);
     setRecommendRes(data);
   };
 
@@ -70,38 +67,6 @@ const SmartParking = () => {
     recommendData();
   }, [markerPoint]);
 
-  const forceUpdate = useCallback(() => updateState({}), []);
-
-  // useEffect(() => {
-  //   let timer = setTimeout(() => setRender(true), 2000);
-  //   console.log('TIMER 2 DETIK');
-  //   return () => {
-  //     clearTimeout(timer);
-  //   };
-  // }, [render]);
-
-  console.log('rendering...');
-
-  const pins = useMemo(
-    () =>
-      latLongRes.map((city, index) => (
-        <Marker
-          key={`marker-${index}`}
-          longitude={city.longitude}
-          latitude={city.latitude}
-          anchor='bottom'
-          onClick={(e) => {
-            // If we let the click event propagates to the map, it will immediately close the popup
-            // with `closeOnClick: true`
-            e.originalEvent.stopPropagation();
-            setPopupInfo(city);
-          }}>
-          <Lot />
-        </Marker>
-      )),
-    []
-  );
-
   return (
     <>
       <Head>
@@ -113,6 +78,9 @@ const SmartParking = () => {
         <GreenHeader searchBar={true} setSearchValue={setSearchValue} searchValue={searchValue} />
         {searchValue != '' ? (
           <Box p={'16px 40px'}>
+            <Text fontSize={'12px'} color={colours.placeholder} fontWeight={'medium'}>
+              Atleast type 3 words..
+            </Text>
             <Text fontSize={'14px'} fontWeight={'medium'} marginBottom={'24px'}>
               Result for "{searchValue}"
             </Text>
@@ -176,10 +144,25 @@ const SmartParking = () => {
                 }
                 latitude={mapPoint.lat}
                 longitude={mapPoint.long}
-                onDrag={handleMapOnDrag}
-                // onDragEnd={handleMapOnDragEnd}
-              >
-                {latLongRes ? pins : forceUpdate()}
+                onDrag={handleMapOnDrag}>
+                {latLongRes &&
+                  latLongRes.map((city, idx) => {
+                    return (
+                      <Marker
+                        key={`marker-${city.id}`}
+                        longitude={city.longitude}
+                        latitude={city.latitude}
+                        anchor='bottom'
+                        onClick={(e) => {
+                          // If we let the click event propagates to the map, it will immediately close the popup
+                          // with `closeOnClick: true`
+                          e.originalEvent.stopPropagation();
+                          setPopupInfo(city);
+                        }}>
+                        <Lot />
+                      </Marker>
+                    );
+                  })}
 
                 <Marker
                   latitude={markerPoint.lat}
@@ -194,17 +177,24 @@ const SmartParking = () => {
 
                 {popupInfo && (
                   <Popup
-                    style={{ maxWidth: '120px', fontSize: '14px', fontFamily: 'poppins', fontWeight: 'medium' }}
+                    style={{
+                      maxWidth: '120px',
+                      fontSize: '14px',
+                      fontFamily: 'poppins',
+                      fontWeight: 'medium',
+                      backgroundColor: colours.custom3,
+                    }}
                     anchor='top'
                     longitude={Number(popupInfo.longitude)}
                     latitude={Number(popupInfo.latitude)}
-                    onClose={() => setPopupInfo(null)}>
-                    <img width='100%' src={`/image/${popupInfo.image}`} style={{ borderRadius: '6px' }} />
+                    onClose={() => setPopupInfo(null)}
+                    closeButton={false}>
                     <div
                       onClick={() => {
                         handleRedirect(popupInfo.id);
                       }}>
-                      {popupInfo.name}
+                      <img width='100%' src={`/image/${popupInfo.image}`} style={{ borderRadius: '6px' }} />
+                      <Text noOfLines={2}>{popupInfo.name}</Text>
                     </div>
                   </Popup>
                 )}
@@ -234,6 +224,23 @@ const SmartParking = () => {
                 })}
               </Box>
             )}
+          </Flex>
+        )}
+        {((searchValue.length > 0 && searchValue.length >= 3 && searchRes.length <= 0) ||
+          (searchValue <= 0 && latLongRes.length <= 0)) && (
+          <Flex p={'0px 40px'} w={'full'} marginTop={'20px'} justifyContent={'center'}>
+            <Flex>
+              <Flex
+                borderRadius={'12px'}
+                border={`1px solid ${colours.gray1}`}
+                alignItems={'center'}
+                justifyContent={'center'}
+                p={'20px'}>
+                <Text color={colours.gray1} textAlign={'center'}>
+                  Tidak Ada Hasil yang Ditemukan :V
+                </Text>
+              </Flex>
+            </Flex>
           </Flex>
         )}
       </Box>
