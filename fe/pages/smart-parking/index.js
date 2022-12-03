@@ -1,40 +1,16 @@
 import { Flex, Box, Text, Tag } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import LotCard from '../../src/components/Card/ParkingLot';
 import GreenHeader from '../../src/components/GreenHeader';
 import { search, getNearestByLatLong, getRecommendationByLatLong } from '../../src/services';
-import Map, { Marker } from 'react-map-gl';
+import Map, { Marker, Popup } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import colours from '../../styles/colours';
 import Head from 'next/head';
-
-// const data = [
-//   {
-//     id: 1,
-//     title: 'Abu Bakar Ali',
-//     place_id: 'Jl. Abu Bakar Ali No.75, 001, Suryatmajan, Kec. Danurejan',
-//     type: 'Car, Bus',
-//     capacity: 999,
-//     used: 899,
-//   },
-//   {
-//     id: 2,
-//     title: 'Ngabean',
-//     place_id: 'Jl. Abu Bakar Ali No.75, 001, Suryatmajan, Kec. Danurejan',
-//     type: 'Motor, Car',
-//     capacity: 499,
-//     used: 199,
-//   },
-//   {
-//     id: 3,
-//     title: 'Malioboro',
-//     place_id: 'Jl. Abu Bakar Ali No.75, 001, Suryatmajan, Kec. Danurejan',
-//     type: 'Motor, Car, Bus',
-//     capacity: 40,
-//     used: 40,
-//   },
-// ];
+import Pin from '../../public/icon/pin';
+import Lot from '../../public/icon/lot';
+import Walk from '../../public/icon/walk';
 
 const SmartParking = () => {
   const router = useRouter();
@@ -46,6 +22,7 @@ const SmartParking = () => {
   const [markerPoint, setMarkerPoint] = useState({ lat: lat ?? -7.811850253309766, long: long ?? 110.36286696293398 });
   const [latLongRes, setLatLongRes] = useState([]);
   const [recommendRes, setRecommendRes] = useState([]);
+  const [popupInfo, setPopupInfo] = useState(null);
 
   const searchData = async () => {
     const data = await search(searchValue);
@@ -73,6 +50,10 @@ const SmartParking = () => {
     setMapPoint({ lat: e.viewState.latitude, long: e.viewState.longitude });
   };
 
+  const handleRedirect = (id) => {
+    router.push(`/lot-detail/${id}`);
+  };
+
   useEffect(() => {
     if (searchValue.length >= 3) {
       searchData();
@@ -86,10 +67,6 @@ const SmartParking = () => {
     recommendData();
   }, [markerPoint]);
 
-  const handleRedirect = (id) => {
-    router.push(`/lot-detail/${id}`);
-  };
-
   return (
     <>
       <Head>
@@ -101,6 +78,9 @@ const SmartParking = () => {
         <GreenHeader searchBar={true} setSearchValue={setSearchValue} searchValue={searchValue} />
         {searchValue != '' ? (
           <Box p={'16px 40px'}>
+            <Text fontSize={'12px'} color={colours.placeholder} fontWeight={'medium'}>
+              Atleast type 3 words..
+            </Text>
             <Text fontSize={'14px'} fontWeight={'medium'} marginBottom={'24px'}>
               Result for "{searchValue}"
             </Text>
@@ -164,9 +144,26 @@ const SmartParking = () => {
                 }
                 latitude={mapPoint.lat}
                 longitude={mapPoint.long}
-                onDrag={handleMapOnDrag}
-                // onDragEnd={handleMapOnDragEnd}
-              >
+                onDrag={handleMapOnDrag}>
+                {latLongRes &&
+                  latLongRes.map((city, idx) => {
+                    return (
+                      <Marker
+                        key={`marker-${city.id}`}
+                        longitude={city.longitude}
+                        latitude={city.latitude}
+                        anchor='bottom'
+                        onClick={(e) => {
+                          // If we let the click event propagates to the map, it will immediately close the popup
+                          // with `closeOnClick: true`
+                          e.originalEvent.stopPropagation();
+                          setPopupInfo(city);
+                        }}>
+                        <Lot />
+                      </Marker>
+                    );
+                  })}
+
                 <Marker
                   latitude={markerPoint.lat}
                   longitude={markerPoint.long}
@@ -175,24 +172,40 @@ const SmartParking = () => {
                   draggable={true}
                   scale={3}
                   onDragEnd={handleOnDrag}>
-                  <Flex
-                    w={8}
-                    h={8}
-                    justifyContent={'center'}
-                    alignItems={'center'}
-                    bg={'rgba(67, 115, 226, 0.25)'}
-                    borderRadius={'100%'}
-                    zIndex={0}>
-                    <Box w={4} h={4} bg={colours.custom6} border={'1px solid white'} borderRadius={'100%'}></Box>
-                  </Flex>
+                  <Walk />
                 </Marker>
+
+                {popupInfo && (
+                  <Popup
+                    style={{
+                      maxWidth: '120px',
+                      fontSize: '14px',
+                      fontFamily: 'poppins',
+                      fontWeight: 'medium',
+                      backgroundColor: colours.custom3,
+                    }}
+                    anchor='top'
+                    longitude={Number(popupInfo.longitude)}
+                    latitude={Number(popupInfo.latitude)}
+                    onClose={() => setPopupInfo(null)}
+                    closeButton={false}>
+                    <div
+                      onClick={() => {
+                        handleRedirect(popupInfo.id);
+                      }}>
+                      <img width='100%' src={`/image/${popupInfo.image}`} style={{ borderRadius: '6px' }} />
+                      <Text noOfLines={2}>{popupInfo.name}</Text>
+                    </div>
+                  </Popup>
+                )}
               </Map>
             </Box>
             {latLongRes.length > 0 && (
               <Box
                 marginTop={'22px'}
                 maxH={'23vh'}
-                overflowY={'scroll'}
+                // overflowY={'scroll'}
+                overflow={'visible'}
                 sx={{
                   '::-webkit-scrollbar': {
                     display: 'none',
@@ -211,6 +224,23 @@ const SmartParking = () => {
                 })}
               </Box>
             )}
+          </Flex>
+        )}
+        {((searchValue.length > 0 && searchValue.length >= 3 && searchRes.length <= 0) ||
+          (searchValue <= 0 && latLongRes.length <= 0)) && (
+          <Flex p={'0px 40px'} w={'full'} marginTop={'20px'} justifyContent={'center'}>
+            <Flex>
+              <Flex
+                borderRadius={'12px'}
+                border={`1px solid ${colours.gray1}`}
+                alignItems={'center'}
+                justifyContent={'center'}
+                p={'20px'}>
+                <Text color={colours.gray1} textAlign={'center'}>
+                  Tidak Ada Hasil yang Ditemukan :V
+                </Text>
+              </Flex>
+            </Flex>
           </Flex>
         )}
       </Box>

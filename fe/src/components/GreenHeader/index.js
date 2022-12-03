@@ -46,7 +46,6 @@ const GreenHeader = ({ searchBar, setSearchValue, searchValue }) => {
                   _placeholder={{ fontSize: '14px' }}
                   value={searchValue}
                   onChange={(e) => {
-                    // console.log('line 42 SEARCH VALUE', e.target.value);
                     setSearchValue(e.target.value);
                   }}
                 />

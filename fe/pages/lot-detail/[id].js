@@ -58,7 +58,16 @@ const LotDetail = () => {
             borderRadius={'8px'}
             bg={'white'}>
             <Box w={'100%'} h={'100%'} pos={'relative'} borderRadius={'8px'} overflow={'hidden'}>
-              <Image src={`/image/${lotDetail?.image}`} alt={'Parking Lot Image'} layout={'fill'} objectFit={'cover'} />
+              {lotDetail ? (
+                <Image
+                  src={`/image/${lotDetail?.image}`}
+                  alt={'Parking Lot Image'}
+                  layout={'fill'}
+                  objectFit={'cover'}
+                />
+              ) : (
+                <Text>Image Not Found</Text>
+              )}
             </Box>
           </Flex>
           {lotDetail?.parkings?.map((item, idx) => {
