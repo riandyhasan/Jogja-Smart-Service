@@ -6,3 +6,6 @@ env
 
 # SQLite
 be/-- SQLite.sql
+
+# deta
+be/.deta

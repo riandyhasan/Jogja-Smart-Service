@@ -145,8 +145,8 @@ const SmartParking = () => {
                 latitude={mapPoint.lat}
                 longitude={mapPoint.long}
                 onDrag={handleMapOnDrag}>
-                {latLongRes &&
-                  latLongRes.map((city, idx) => {
+                {latLongRes.length > 0 &&
+                  latLongRes?.map((city, idx) => {
                     return (
                       <Marker
                         key={`marker-${city.id}`}
