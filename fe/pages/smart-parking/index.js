@@ -228,7 +228,7 @@ const SmartParking = () => {
             )}
           </Flex>
         )}
-        {((searchValue.length > 0 && searchValue.length >= 3 && searchRes.length <= 0) ||
+        {((searchValue.length > 0 && searchValue.length >= 3 && searchRes?.length <= 0) ||
           (searchValue <= 0 && latLongRes?.length <= 0)) && (
           <Flex p={'0px 40px'} w={'full'} marginTop={'20px'} justifyContent={'center'}>
             <Flex>
